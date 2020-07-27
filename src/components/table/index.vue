@@ -1,13 +1,18 @@
 <template>
   <el-table v-bind="$attrs">
     <el-table-column
-      v-for="{ key, ...field } in dealedFields"
+      v-for="{ key, ...field } in columnFields"
+      :key="key"
+      v-bind="field"
+    />
+    <el-table-column
+      v-for="{ key, ...field } in userFields"
       :key="key"
       v-bind="field"
     >
-      <template slot-scope="scope" v-if="!field.type">
+      <template slot-scope="scope">
         <slot :name="key" v-bind="scope">
-            {{ scope.row[key] }}
+          {{ scope.row[key] }}
         </slot>
       </template>
     </el-table-column>
@@ -16,6 +21,7 @@
 
 <script>
 import TableFields from "./tableFields";
+import { tableColumnTypes } from "./constants";
 
 export default {
   name: "HyTable",
@@ -37,7 +43,14 @@ export default {
         this.nextFields
       );
     },
+    columnFields() {
+      return this.dealedFields.filter(({ type }) => tableColumnTypes[type]);
+    },
+    userFields() {
+      return this.dealedFields.filter(({ type }) => !tableColumnTypes[type]);
+    },
   },
+
   created() {
     this.tableFields = new TableFields();
   },
