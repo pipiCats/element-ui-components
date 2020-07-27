@@ -1,0 +1,1 @@
+export const tableColumnTypes = ['selection', 'index', 'expand'];
