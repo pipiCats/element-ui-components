@@ -6,6 +6,9 @@
       :field="field"
       :form="form"
     >
+      <template :slot="`${key}-label`" slot-scope="props">
+        <slot :name="`${key}-label`" v-bind="props" />
+      </template>
       <template :slot="key" slot-scope="props">
         <slot :name="key" v-bind="props" />
       </template>
@@ -30,7 +33,7 @@ export default {
   props: {
     size: {
       type: String,
-      default: 'small',
+      default: "small",
     },
     value: {
       type: Object,
@@ -72,12 +75,13 @@ export default {
   computed: {
     formProps() {
       return {
-        size: this.size
-      }
+        size: this.size,
+        ...this.$attrs,
+      };
     },
     dealedFields() {
       return this.formFields.combineWithNextFields(
-        this.fields,
+        Object.freeze(this.fields),
         this.nextFields
       );
     },
@@ -107,6 +111,6 @@ export default {
   created() {
     this.formFields = new FormFields();
     this.form = this.value || {};
-  }
+  },
 };
 </script>

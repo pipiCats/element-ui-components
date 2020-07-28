@@ -9,18 +9,21 @@
       <el-table-column
         v-for="{ key, type, render, ...field } in userFields"
         :key="key"
+        :type="type"
         v-bind="field"
       >
         <template slot-scope="scope">
           <slot :name="key" v-bind="scope">
-            <template v-if="typeof render === 'function'">
-              {{ render(scope.row[key], scope.row) }}
-            </template>
-            <template v-if="type && !render">
-              {{ renderFunc(type)(scope.row[key], scope.row) }}
-            </template>
-            <template v-if="!type && !render">
-              {{ scope.row[key] }}
+            <template v-if="isNotExpandColumn(type)">
+              <template v-if="typeof render === 'function'">
+                {{ render(scope.row[key], scope.row) }}
+              </template>
+              <template v-if="type && !render">
+                {{ renderFunc(type)(scope.row[key], scope.row) }}
+              </template>
+              <template v-if="!type && !render">
+                {{ scope.row[key] }}
+              </template>
             </template>
           </slot>
         </template>
@@ -34,7 +37,6 @@
         :on-search="onSearch"
       />
     </el-row>
-    {{ pageParam }}
   </el-row>
 </template>
 
@@ -42,7 +44,7 @@
 import pick from "lodash.pick";
 import HyPagination from "../pagination";
 import TableFields from "./tableFields";
-import { tableColumnTypes } from "./constants";
+import { EXPAND_COLUMN, SPECIAL_TABLE_COLUMN } from "./constants";
 import defaultRenderType from "./renderType";
 import warning from "../_utils/warning";
 
@@ -92,8 +94,8 @@ export default {
     },
     search: {
       type: Object,
-      default: undefined
-    }
+      default: undefined,
+    },
   },
   data() {
     return {
@@ -111,15 +113,17 @@ export default {
     },
     dealedFields() {
       return this.tableFields.combineWithNextFields(
-        this.fields,
+        Object.freeze(this.fields),
         this.nextFields
       );
     },
     columnFields() {
-      return this.dealedFields.filter(({ type }) => tableColumnTypes[type]);
+      return this.dealedFields.filter(({ type }) => SPECIAL_TABLE_COLUMN[type]);
     },
     userFields() {
-      return this.dealedFields.filter(({ type }) => !tableColumnTypes[type]);
+      return this.dealedFields.filter(
+        ({ type }) => !SPECIAL_TABLE_COLUMN[type]
+      );
     },
     loadingProp() {
       return this.loading || this.paginationLoading;
@@ -135,10 +139,13 @@ export default {
         if (val) {
           this.pageParam = val;
         }
-      }
-    }
+      },
+    },
   },
   methods: {
+    isNotExpandColumn(type) {
+      return type !== EXPAND_COLUMN;
+    },
     renderFunc(type) {
       const renderFunc = this.renderTypes[type];
       warning(

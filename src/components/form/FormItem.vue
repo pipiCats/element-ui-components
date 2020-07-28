@@ -1,12 +1,16 @@
 <template>
   <el-col v-bind="colProps">
     <el-form-item v-bind="formItemProps" :class="formItemClass">
+      <template slot="label">
+        <slot :name="`${key}-label`" v-bind="{label}">
+          {{ label }}
+        </slot>
+      </template>
       <div :style="{ width: wrapperWidthProp }">
         <slot :name="key" v-bind="slotScope">
           <field-element v-model="form[key]" v-bind="inputProps" />
         </slot>
       </div>
-      <template></template>
     </el-form-item>
   </el-col>
 </template>
@@ -34,6 +38,10 @@ export default {
     key() {
       const { prop } = this.field;
       return prop;
+    },
+    label() {
+      const { label } = this.field;
+      return label;
     },
     slotScope() {
       const { attrs, props } = this.field;
@@ -75,7 +83,8 @@ export default {
     },
     formItemClass() {
       return {
-        "hope-colon": this.colonProp,
+        "furion-form-item-colon": this.colonProp,
+        [`furion-form-item-label-${this.labelAlign}`]: true
       };
     },
   },
@@ -83,8 +92,20 @@ export default {
 </script>
 
 <style lang="css">
-.hope-colon .el-form-item__label:after {
+.furion-form-item-colon .el-form-item__label:after {
   content: ":";
   color: #333;
+}
+
+.furion-form-item-label-left .el-form-item__label {
+  text-align: left;
+}
+
+.furion-form-item-label-center .el-form-item__label {
+  text-align: center;
+}
+
+.furion-form-item-label-right .el-form-item__label {
+  text-align: right;
 }
 </style>

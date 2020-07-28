@@ -17,6 +17,7 @@ export default {
         background: true,
         ...this.$attrs,
         layout: this.layout,
+        total: this.total,
         currentPage: this.current,
         pageSize: this.pageSize,
       };

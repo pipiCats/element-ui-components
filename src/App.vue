@@ -3,6 +3,9 @@
     <el-row>
       <el-row>
         <hy-form v-model="form" v-bind="formProps">
+          <template slot="orderNo-label" slot-scope="{ label }">
+            {{ label }}
+          </template>
           <template slot="orderNo" slot-scope="props">
             <el-input
               v-bind="props"
@@ -22,7 +25,11 @@
       </el-row>
     </el-row>
     <el-row>
-      <hy-table v-bind="tableProps"></hy-table>
+      <hy-table v-bind="tableProps">
+        <template slot="expand" slot-scope="{ row }">
+          {{ row.code }}
+        </template>
+      </hy-table>
     </el-row>
   </div>
 </template>
@@ -101,10 +108,10 @@ export default {
   },
   methods: {
     onSearch(param) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           console.log("param", param);
-          reject();
+          resolve();
         }, 500);
       });
     },

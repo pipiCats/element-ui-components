@@ -32,6 +32,10 @@ export default {
       type: String,
       default: "current",
     },
+    total: {
+      type: Number,
+      default: 0
+    }
   },
   data() {
     return {
@@ -76,6 +80,9 @@ export default {
         [this.pageSizeKey]: pageSize,
         [this.currentKey]: this.current,
       };
+      if (pageSize * this.current > this.total) {
+        pageParam[this.currentKey] = DEFAULT_CURRENT;
+      }
       this.handleSearch(pageParam);
     },
     handleCurrentChange(current) {

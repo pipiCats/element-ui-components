@@ -17,6 +17,16 @@ export const searchFields = [
 
 export const tableFields = [
   {
+    key: "selection",
+    type: "selection",
+    width: "80px",
+  },
+  {
+    key: "expand",
+    type: "expand",
+    width: "80px",
+  },
+  {
     key: "index",
     name: "序号",
     type: "index",

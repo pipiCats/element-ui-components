@@ -24,25 +24,27 @@ export default {
       // 存储分页参数key
       __paramKey: {},
       // 默认pageParam
-      __defaultPageParam: {}
+      __defaultPageParam: {},
     };
   },
   computed: {
     nextTableProps() {
+      const searchProps = this.__pageParam ? { search: this.__pageParam } : {};
+
       return {
         onSearch: (pageParam, paramKey) => {
-          return this.searchProxy(
+          return this._searchProxy(
             ACTION_TYPE.TABLE_SEARCH,
             pageParam,
             paramKey
           );
         },
         loading: this.pageloading,
-        search: this.__pageParam,
+        ...searchProps,
       };
     },
-    searchProxy() {
-      return this.createSearchProxy();
+    _searchProxy() {
+      return this._createSearchProxy();
     },
   },
   methods: {
@@ -53,7 +55,7 @@ export default {
         this.pageloading = loading;
       }
     },
-    createSearchProxy() {
+    _createSearchProxy() {
       const handler = {
         async apply(target, context, applyArguments) {
           let params;
@@ -82,16 +84,10 @@ export default {
               ...(context.__pageParam || context.__defaultPageParam),
               [currentKey]: DEFAULT_CURRENT,
             };
-            params = {
-              ...finalPageParam,
-              ...context.form,
-            };
+            params = { ...finalPageParam, ...context.form };
             tempPageParams = finalPageParam;
           } else if (actionType === ACTION_TYPE.FRESH) {
-            params = {
-              ...context.__pageParam,
-              ...context.form,
-            };
+            params = { ...context.__pageParam, ...context.form };
           }
           context.__setPageLoading(actionType, true);
           const result = await target(params).catch((error) => {
@@ -100,6 +96,7 @@ export default {
           });
           context.__pageParam = tempPageParams;
           context.__setPageLoading(actionType, false);
+
           return result;
         },
       };
@@ -108,19 +105,19 @@ export default {
         ? new Proxy(this.onSearch, handler)
         : (...args) => handler.apply(this.onSearch, this, args);
     },
-    createAction(actionType) {
+    _createAction(actionType) {
       // 处理重新提交查询请求
       if (this.pageloading || this.__tableLoading) return;
-      this.searchProxy(actionType);
+      this._searchProxy(actionType);
     },
     [ACTION_TYPE.QUERY]() {
-      this.createAction(ACTION_TYPE.QUERY);
+      this._createAction(ACTION_TYPE.QUERY);
     },
     [ACTION_TYPE.RESET]() {
-      this.createAction(ACTION_TYPE.RESET);
+      this._createAction(ACTION_TYPE.RESET);
     },
     [ACTION_TYPE.FRESH]() {
-      this.createAction(ACTION_TYPE.FRESH);
+      this._createAction(ACTION_TYPE.FRESH);
     },
   },
   created() {
