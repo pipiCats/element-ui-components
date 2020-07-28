@@ -53,7 +53,7 @@ class FormFields extends AbstractFields {
     };
   };
 
-  mergeField = (field, nextField) => {
+  mergeField = (field = {}, nextField) => {
     return Object.keys(nextField).reduce(
       (next, key) => {
         if (isPlainObject(field[key]) && isPlainObject(nextField[key])) {

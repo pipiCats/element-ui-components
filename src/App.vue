@@ -1,83 +1,122 @@
 <template>
   <div id="app">
-    <hy-form v-model="form" v-bind="formProps">
-      <template slot="orderNo" slot-scope="props">
-        <el-input v-model="form.orderNo" v-bind="props" @click.native="handleClick" />
-      </template>
-    </hy-form>
-   <el-row>
-    <hy-table v-bind="tableProps" />
-   </el-row>
+    <el-row>
+      <el-row>
+        <hy-form v-model="form" v-bind="formProps">
+          <template slot="orderNo" slot-scope="props">
+            <el-input
+              v-bind="props"
+              v-model="form.orderNo"
+              @click.native="handleClick"
+            />
+          </template>
+        </hy-form>
+      </el-row>
+      <el-row>
+        <el-button type="primary" @click="onQuery">
+          查询
+        </el-button>
+        <el-button  @click="onReset">
+          重置
+        </el-button>
+      </el-row>
+    </el-row>
+    <el-row>
+      <hy-table v-bind="tableProps"></hy-table>
+    </el-row>
   </div>
 </template>
 
 <script>
+import { HyForm, HyTable } from "./components";
+import { searchFields, tableFields } from "./fields";
+import searchPageMixin from "./mixins/searchPageMixin";
 
-import { HyForm, HyTable } from './components';
-import { searchFields, tableFields } from './fields';
-
-const fieldCol = { 
+const fieldCol = {
   xl: 6,
   lg: 8,
   md: 8,
-  sm: 12
+  sm: 12,
 };
 
 export default {
-  name: 'App',
+  name: "App",
+  mixins: [searchPageMixin],
   data() {
     return {
       form: {
-        name: 2
+        name: 222
       },
-      inputValue: '',
-    }
+      inputValue: "",
+    };
   },
   computed: {
     formProps() {
       return {
         fieldCol,
         fields: searchFields,
-        nextFields: [{
-         key: 'age',
-         name: '年龄1',
-      }, {
-        key: 'orderNo',
-        required: true,
-      }]
-      }
+        nextFields: [
+          {
+            key: "age",
+            name: "年龄1",
+          },
+          {
+            key: "orderNo",
+          },
+        ],
+      };
     },
     tableProps() {
       return {
         fields: tableFields,
         border: true,
-        data: [{
-          code: 'CP-20200727-27424',
-          name: '重量区间计费',
-          updateTime: '1595850116268'
-        }, {
-          code: 'CP-20200727-27423',
-          name: '交叉条件测试',
-          updateTime: '1595835561017'
-        }],
-        nextFields: [{
-          key: 'updateTime',
-          name: '更新时间',
-          type: 'datetime'
-        }]
+        data: [
+          {
+            code: "CP-20200727-27424",
+            name: "重量区间计费",
+            updateTime: 1595850116268,
+          },
+          {
+            code: "CP-20200727-27423",
+            name: "交叉条件测试",
+            updateTime: 1595828820568,
+          },
+        ],
+        nextFields: [
+          {
+            key: "name",
+            render: (value) => `${value}-'---'`,
+          },
+          {
+            key: "updateTime",
+            name: "更新时间",
+            type: "datetime",
+          },
+        ],
+        ...this.nextTableProps,
+        pageSizeKey: 'size',
+        currentKey: 'page'
       };
-    }
+    },
   },
   methods: {
+    onSearch(param) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          console.log("param", param);
+          reject();
+        }, 500);
+      });
+    },
     handleClick() {
-      console.log('---');
-    }
+      console.log("---");
+    },
   },
   components: {
-   HyForm,
-   HyTable
-  }
-}
+    HyForm,
+    HyTable,
+  },
+};
 </script>
 
 <style>

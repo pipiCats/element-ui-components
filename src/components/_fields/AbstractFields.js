@@ -42,6 +42,7 @@ class AbstractFields {
           "nextField"
         );
       } else {
+        this.keyMap[key] = dealedFields.length;
         this.dealedFields.push(
           createDealedField(nextField, dealedFields.length, "nextField")
         );

@@ -3,18 +3,11 @@ export const searchFields = [
     key: "age",
     name: "年龄",
     type: "input",
-    required: true,
   },
   {
     key: "name",
     name: "姓名",
     type: "number",
-    required: true,
-    nativeOn: {
-      click() {
-        console.log(1);
-      },
-    },
   },
   {
     key: "orderNo",

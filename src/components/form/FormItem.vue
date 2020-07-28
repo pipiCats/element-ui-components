@@ -6,7 +6,7 @@
           <field-element v-model="form[key]" v-bind="inputProps" />
         </slot>
       </div>
-      <template> </template>
+      <template></template>
     </el-form-item>
   </el-col>
 </template>
@@ -23,11 +23,12 @@ export default {
   props: {
     field: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => {},
     },
-    form: Object,
+    form: {
+      type: Object,
+      default: () => {},
+    },
   },
   computed: {
     key() {
@@ -82,7 +83,6 @@ export default {
 </script>
 
 <style lang="css">
-
 .hope-colon .el-form-item__label:after {
   content: ":";
   color: #333;

@@ -94,6 +94,7 @@ export default {
   },
   watch: {
     form: {
+      immediate: true,
       deep: true,
       handler(value) {
         this.$emit("input", value);
@@ -105,7 +106,7 @@ export default {
   },
   created() {
     this.formFields = new FormFields();
-    this.form = this.value;
+    this.form = this.value || {};
   }
 };
 </script>
