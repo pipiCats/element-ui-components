@@ -5,9 +5,9 @@ Vue.component("field-element", {
   props: ["value"],
   inheritAttrs: false,
   render(createElement) {
-    const { type, props, on, ...other } = this.$attrs;
+    const { globalFieldType, type, props, on, ...other } = this.$attrs;
     return createElement(
-      fieldTypes[type],
+      fieldTypes[type] || globalFieldType[type],
       {
         props: {
           ...props,

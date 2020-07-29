@@ -2,7 +2,7 @@
   <el-col v-bind="colProps">
     <el-form-item v-bind="formItemProps" :class="formItemClass">
       <template slot="label">
-        <slot :name="`${key}-label`" v-bind="{label}">
+        <slot :name="`${key}-label`" v-bind="{ label }">
           {{ label }}
         </slot>
       </template>
@@ -23,7 +23,14 @@ import "./FieldElement";
 
 export default {
   name: "HyFormItem",
-  inject: ["labelAlign", "fieldCol", "labelWidth", "wrapperWidth", "colon"],
+  inject: [
+    "labelAlign",
+    "fieldCol",
+    "labelWidth",
+    "wrapperWidth",
+    "colon",
+    "globalFieldType",
+  ],
   props: {
     field: {
       type: Object,
@@ -51,7 +58,10 @@ export default {
       };
     },
     inputProps() {
-      return pick(this.field, ["type", ...ElemetPropsKeys]);
+      return {
+        ...pick(this.field, ["type", ...ElemetPropsKeys]),
+        globalFieldType:  this.globalFieldType || {}
+      };
     },
     colProps() {
       const { fieldCol } = this.field;
@@ -84,7 +94,7 @@ export default {
     formItemClass() {
       return {
         "furion-form-item-colon": this.colonProp,
-        [`furion-form-item-label-${this.labelAlign}`]: true
+        [`furion-form-item-label-${this.labelAlign}`]: true,
       };
     },
   },

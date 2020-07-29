@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-table v-bind="$attrs" v-loading="loadingProp">
+    <el-table v-bind="$attrs" v-on="$listeners" v-loading="loadingProp">
       <el-table-column
         v-for="{ key, ...field } in columnFields"
         :key="key"

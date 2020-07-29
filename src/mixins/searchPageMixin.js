@@ -48,7 +48,7 @@ export default {
     },
   },
   methods: {
-    __setPageLoading(actionType, loading) {
+    _setPageLoading(actionType, loading) {
       if (actionType === ACTION_TYPE.TABLE_SEARCH) {
         this.__tableLoading = loading;
       } else {
@@ -89,13 +89,13 @@ export default {
           } else if (actionType === ACTION_TYPE.FRESH) {
             params = { ...context.__pageParam, ...context.form };
           }
-          context.__setPageLoading(actionType, true);
+          context._setPageLoading(actionType, true);
           const result = await target(params).catch((error) => {
-            context.__setPageLoading(actionType, false);
+            context._setPageLoading(actionType, false);
             throw error;
           });
           context.__pageParam = tempPageParams;
-          context.__setPageLoading(actionType, false);
+          context._setPageLoading(actionType, false);
 
           return result;
         },

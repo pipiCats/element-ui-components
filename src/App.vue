@@ -112,7 +112,7 @@ export default {
         setTimeout(() => {
           console.log("param", param);
           resolve();
-        }, 500);
+        }, 4000);
       });
     },
     handleClick() {
