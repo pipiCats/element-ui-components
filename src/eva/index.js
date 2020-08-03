@@ -6,6 +6,7 @@ import createStore from "./createStore";
 import checkModel from "./checkModel";
 import checkStore from "./checkStore";
 import getSaga from "./getSaga";
+import effectPlugin from './effectPlugin';
 
 const defaultOnError = (error) => {
   throw error;
@@ -15,7 +16,7 @@ export default function start({
   store,
   models = [],
   onError = defaultOnError,
-  onEffects =  []
+  onEffect =  []
 }) {
   // 检查store对象
   checkStoreInstance(store);
@@ -59,7 +60,7 @@ export default function start({
     const { effects, namespace } = m;
 
     if (effects) {
-      sagaMiddleware.run(getSaga(effects, m, onError, onEffects, {}));
+      sagaMiddleware.run(getSaga(effects, m, onError, onEffect, {}));
     }
     // vuex动态注入model
     if (!enchanceStore.hasModule(namespace)) {
@@ -71,4 +72,8 @@ export default function start({
   enchanceStore.registerModel = registerModel;
 
   return enchanceStore;
+}
+
+export {
+  effectPlugin
 }

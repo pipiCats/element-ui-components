@@ -23,6 +23,7 @@ export default function createStore(store, enhancer) {
       `action should be plain object, but got ${typeof action}`
     );
     const { type } = action;
+
     // 执行commit
     if (_mutations[type]) {
       commit(type, action);
