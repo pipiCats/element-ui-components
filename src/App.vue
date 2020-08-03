@@ -16,7 +16,7 @@
         </hy-form>
       </el-row>
       <el-row>
-        <el-button type="primary" @click="onQuery">
+        <el-button type="primary" @click="handleClick">
           查询
         </el-button>
         <el-button  @click="onReset">
@@ -31,6 +31,8 @@
         </template>
       </hy-table>
     </el-row>
+
+    <span>state: {{ state }}</span>
   </div>
 </template>
 
@@ -49,6 +51,13 @@ const fieldCol = {
 export default {
   name: "App",
   mixins: [searchPageMixin],
+  provide() {
+    return {
+      globalRenderType: {
+        test: value => `${value}-test`
+      }
+    }
+  },
   data() {
     return {
       form: {
@@ -58,6 +67,10 @@ export default {
     };
   },
   computed: {
+    state() {
+      console.log(this.$store.state);
+      return this.$store.state
+    },
     formProps() {
       return {
         fieldCol,
@@ -92,7 +105,10 @@ export default {
         nextFields: [
           {
             key: "name",
-            render: (value) => `${value}-'---'`,
+            type: 'test',
+            t: {
+              name: 1
+            }
           },
           {
             key: "updateTime",
@@ -112,12 +128,15 @@ export default {
         setTimeout(() => {
           console.log("param", param);
           resolve();
-        }, 4000);
+        }, 500);
       });
     },
     handleClick() {
-      console.log("---");
-    },
+      this.$store.dispatch({
+        type: 'product/test',
+        payload: { count: 2 }
+      });
+    }
   },
   components: {
     HyForm,

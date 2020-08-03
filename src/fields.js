@@ -39,5 +39,8 @@ export const tableFields = [
   {
     key: "name",
     name: "产品名称",
+    t: {
+      name: 2
+    }
   },
 ];
