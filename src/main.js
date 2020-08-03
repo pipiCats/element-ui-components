@@ -3,7 +3,8 @@ import App from './App.vue'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import Vuex from 'vuex'
-import createStore, { effectPlugin } from './eva/index';
+import createStore from './eva/index';
+import effectPlugin from './eva-model';
 
 Vue.use(Vuex)
 Vue.config.productionTip = false

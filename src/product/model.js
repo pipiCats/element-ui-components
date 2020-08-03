@@ -5,21 +5,16 @@ export default {
   },
   mutations: {
     changeState(state, { payload }) {
-    return {
-      ...state,
-      ...payload
-    };
+      return {
+        ...state,
+        ...payload,
+      };
     },
   },
   effects: {
-    *test(_, { put, select }) {
-      const { count } = yield select(state => state.product);
-      yield put({
-        type: "changeState",
-        payload: {
-          count: count + 1
-        }
-      });
+    *test(_, { select, update }) {
+      const { count } = yield select();
+      yield update({ count: count + 1 });
     },
   },
 };

@@ -6,7 +6,6 @@ import createStore from "./createStore";
 import checkModel from "./checkModel";
 import checkStore from "./checkStore";
 import getSaga from "./getSaga";
-import effectPlugin from './effectPlugin';
 
 const defaultOnError = (error) => {
   throw error;
@@ -66,14 +65,11 @@ export default function start({
     if (!enchanceStore.hasModule(namespace)) {
       enchanceStore.registerModule(namespace, m);
     }
+
     enchanceStore._effects = existEffects;
   }
 
   enchanceStore.registerModel = registerModel;
 
   return enchanceStore;
-}
-
-export {
-  effectPlugin
 }
