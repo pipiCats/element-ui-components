@@ -2,7 +2,8 @@ import warning from "./warning";
 import isPlainObject from "./isPlainObject";
 
 export default function createStore(store, enhancer) {
-  const { commit, dispatch, _mutations } = store;
+  const { commit, _mutations } = store;
+  const originalDispatch = store.dispatch;
 
   if (typeof enhancer !== "undefined") {
     if (typeof enhancer !== "function") {
@@ -12,10 +13,10 @@ export default function createStore(store, enhancer) {
     return enhancer(createStore)(store);
   }
 
-  function enchanceDispatch(action) {
+  function enchanceDispatch(action, ...args) {
     // action为字符串，我们认为您需要调用vuex原生的action
     if (typeof action === "string") {
-      return dispatch(action);
+      return originalDispatch(action, ...args);
     }
     // 调用saga action
     warning(
