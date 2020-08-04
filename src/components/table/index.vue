@@ -112,10 +112,7 @@ export default {
       };
     },
     dealedFields() {
-      return this.tableFields.combineWithNextFields(
-        Object.freeze(this.fields),
-        this.nextFields
-      );
+      return this.tableFields.combineNextFields(this.nextFields);
     },
     columnFields() {
       return this.dealedFields.filter(({ type }) => SPECIAL_TABLE_COLUMN[type]);
@@ -159,7 +156,7 @@ export default {
     },
   },
   created() {
-    this.tableFields = new TableFields();
+    this.tableFields = new TableFields(this.fields);
   },
   mounted() {
     if (this.onSearch) {

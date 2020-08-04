@@ -80,8 +80,11 @@ export default {
       };
     },
     dealedFields() {
-      return this.formFields.combineWithNextFields(
-        Object.freeze(this.fields),
+      console.log(this.formFields.combineNextFields(
+        this.nextFields
+      ));
+      
+      return this.formFields.combineNextFields(
         this.nextFields
       );
     },
@@ -109,7 +112,7 @@ export default {
     },
   },
   created() {
-    this.formFields = new FormFields();
+    this.formFields = new FormFields(this.fields);
     this.form = this.value || {};
   },
 };
