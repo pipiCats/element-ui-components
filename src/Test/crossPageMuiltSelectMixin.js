@@ -1,7 +1,6 @@
 /**
  * @description 处理表格多选，支持跨页多选
  */
-const SELECT_FLAG = Symbol.for("ROW_SELECTED");
 
 export default {
   data() {
@@ -11,28 +10,43 @@ export default {
       // 当前表格实例
       $table: null,
       // __rowKey，根据此关键字过滤判断选中状态
-      __rowKey: null,
+      __rowKey: "id",
     };
   },
   watch: {
     selecedRows: {
       immediate: true,
       handler(rows) {
-        this.$emit("selected-rows-change", rows);
+        this.$emit("selection-change", rows);
       },
     },
   },
   methods: {
-    __clearSelection() {
+    clearAllSelection() {
       this.selecedRows = [];
       this.__rowsKeyMap = {};
       this.$table.clearSelection();
-      // 重置当前列表数据的选中状态
-      this.$table.data.forEach((row) => {
-        row[SELECT_FLAG] = false;
-      });
     },
-    __setMuiltSelectOptions(options) {
+    clearRow(row = {}) {
+      const isSelected = this.__getRowKey(row);
+      if (isSelected) {
+        this.$table.toggleRowSelection(row, false);
+        this.selecedRows = this.selecedRows.filter(
+          (selectedRow) => selectedRow[this.__rowKey] !== row[this.__rowKey]
+        );
+        this.__deleteRowKey(row);
+      }
+    },
+    __getRowKey(row) {
+      return this.__rowsKeyMap[row[this.__rowKey]];
+    },
+    __deleteRowKey(row) {
+      delete this.__rowsKeyMap[row[this.__rowKey]];
+    },
+    __setRowKey(row) {
+      this.__rowsKeyMap[row[this.__rowKey]] = true;
+    },
+    setMuiltSelectOptions(options) {
       const { tableRef, rowKey } = options;
       this.$table = tableRef;
       this.__rowKey = rowKey;
@@ -42,7 +56,7 @@ export default {
         (data) => {
           if (data.length) {
             data.forEach((row) => {
-              if (this.__rowsKeyMap[row[this.__rowKey]]) {
+              if (this.__getRowKey(row)) {
                 // 调用组件实例方法设置表格选中状态
                 this.$table.toggleRowSelection(row, true);
               }
@@ -53,50 +67,44 @@ export default {
       );
     },
     // 单选
-    __onSelect(selection, row) {
-      if (this.__rowsKeyMap[row[this.__rowKey]] || row[SELECT_FLAG]) {
+    onSelect(_, row) {
+      const isSelected = this.__getRowKey(row);
+      if (isSelected) {
         // 已被选中, 则取消选中
-        row[SELECT_FLAG] = false;
         this.selecedRows = this.selecedRows.filter(
           (selectedRow) => selectedRow[this.__rowKey] !== row[this.__rowKey]
         );
         // 删除对应的key
-        delete this.__rowsKeyMap[row[this.__rowKey]];
+        this.__deleteRowKey(row);
       } else {
-        row[SELECT_FLAG] = true;
-        // 保存对应的key
-        this.__rowsKeyMap[row[this.__rowKey]] = true;
         this.selecedRows.push(row);
+        // 保存对应的key
+        this.__setRowKey(row);
       }
     },
-    __onSelectAll(selection) {
+    onSelectAll(selection) {
       const { data } = this.$table;
       // 取消全选操作
       if (selection.length === 0) {
         const rowKeys = {};
-        data.forEach((item) => {
-          const rowKey = item[this.__rowKey];
-          item[SELECT_FLAG] = false;
-          rowKeys[rowKey] = true;
+        data.forEach((row) => {
+          rowKeys[row[this.__rowKey]] = true;
         });
-        this.selecedRows = this.selecedRows.filter((selectedRow) => {
-          const rowKey = selectedRow[this.__rowKey];
+        this.selecedRows = this.selecedRows.filter((row) => {
+          const rowKey = row[this.__rowKey];
           const isIncludeKey = rowKeys[rowKey];
           if (isIncludeKey) {
-            // 删除对应的key
-            delete this.__rowsKeyMap[rowKey];
+            this.__deleteRowKey(row);
           }
-
           return !isIncludeKey;
         });
       } else {
         const rows = [];
         selection.forEach((row) => {
-          if (!row[SELECT_FLAG]) {
+          const isSelected = this.__getRowKey(row);
+          if (!isSelected) {
             rows.push(row);
-            row[SELECT_FLAG] = true;
-            // 存储key
-            this.__rowsKeyMap[row[this.__rowKey]] = true;
+            this.__setRowKey(row);
           }
         });
         this.selecedRows = this.selecedRows.concat(rows);
@@ -104,7 +112,7 @@ export default {
     },
   },
   created() {
-    // row key map
+    // 保存已选择的row key
     this.__rowsKeyMap = {};
   },
 };

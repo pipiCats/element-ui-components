@@ -7,15 +7,14 @@
       <el-row :style="{ margin: '20px 0' }" type="flex" justify="end">
         <el-button type="primary" size="small" @click="onQuery">查询</el-button>
         <el-button size="small" @click="onReset">重置</el-button>
-                <el-button size="small" @click="__clearSelection">清除多选</el-button>
-
+        <el-button size="small" @click="clearAllSelection">清除多选</el-button>
       </el-row>
     </el-row>
     <el-row>
-      <yl-table  @select="__onSelect" @select-all="__onSelectAll" ref="ylTable" v-bind="tableProps">
-        <template slot="action">
+      <yl-table @select="onSelect" @select-all="onSelectAll" ref="ylTable" v-bind="tableProps">
+        <template slot="body(action)" slot-scope="{row}">
           <span>
-            <el-button type="text" @click="onLoad">启用</el-button>
+            <el-button type="text" @click="clearRow(row)">启用</el-button>
           </span>
         </template>
       </yl-table>
@@ -76,6 +75,10 @@ export default {
             name: "产品类型",
             type: "test",
           },
+          {
+            key: 'action',
+            name: '操作'
+          }
         ],
         total: 50,
         ...this.mixinTableProps,
@@ -101,13 +104,13 @@ export default {
     },
   },
   mounted() {
-    this.__setMuiltSelectOptions({
+    this.setMuiltSelectOptions({
       tableRef: this.$refs.ylTable.$children[0].$table,
       rowKey: "code",
     });
-    this.$on('selected-rows-change', (v) => {
-      console.log('v', v)
-    })
+    this.$on("selection-change", (v) => {
+      console.log("v", v);
+    });
   },
 };
 </script>

@@ -1,7 +1,7 @@
 import Vue from "vue";
 import fieldTypes from "./fieldTypes";
 
-Vue.component("field-element", {
+Vue.component("yl-field-element", {
   props: ["value"],
   inheritAttrs: false,
   render(createElement) {

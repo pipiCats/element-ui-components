@@ -4,9 +4,9 @@ import isPlainObject from "../_utils/isPlainObject";
 class AbstractFields {
   constructor(fields = []) {
     this.fieldKeyMap = {};
-    this.fields = this.createFields(Object.freeze(fields));
-    this.originalFieldsLength = this.fields.legnth;
-    this.rebuildField = this.rebuildField.bind(this);
+    this.fields = Object.freeze(fields);
+    this.finalFields = this.createFields(this.fields);
+    // this.rebuildField = this.rebuildField.bind(this);
   }
 
   createFields(fields) {
@@ -21,30 +21,26 @@ class AbstractFields {
   }
 
   combineNextFields(nextFields) {
-    if (!nextFields) return this.fields;
+    if (!nextFields) return this.finalFields;
     // check nextFields
     this.checkFields(nextFields);
 
-    if (nextFields.length === 0) return this.fields;
-
-    if (this.fields.length > this.originalFieldsLength) {
-      this.fields = this.fields.slice(0, this.originalFieldsLength);
-    }
+    if (!nextFields.length) return this.finalFields;
 
     nextFields.forEach((nextField) => {
       const { key } = nextField;
       const position = this.fieldKeyMap[key];
       if (typeof position !== "undefined") {
         const mergedField = this.mergeField(this.fields[position], nextField);
-        this.fields[position] = this.rebuildField(mergedField, position);
+        this.finalFields[position] = this.rebuildField(mergedField, position);
       } else {
-        const length = this.fields.length;
+        const length = this.finalFields.length;
         this.fieldKeyMap[key] = length;
-        this.fields.push(this.rebuildField(nextField, length));
+        this.finalFields.push(this.rebuildField(nextField, length));
       }
     });
 
-    return this.fields;
+    return this.finalFields;
   }
 
   mergeField(field = {}, nextField) {
@@ -65,7 +61,10 @@ class AbstractFields {
   }
 
   checkFields(fields) {
-    warning(Array.isArray(fields), "fields must be array");
+    warning(
+      Array.isArray(fields),
+      `the fields should be array, but got ${typeof fields}`
+    );
   }
 }
 

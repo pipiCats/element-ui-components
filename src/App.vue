@@ -3,15 +3,11 @@
     <el-row>
       <el-row>
         <hy-form v-model="form" v-bind="formProps">
-          <template slot="orderNo-label" slot-scope="{ label }">
-            {{ label }}
+          <template slot="label-orderNo" slot-scope="{ label }">
+            <span>{{ label }}---</span>
           </template>
           <template slot="orderNo" slot-scope="props">
-            <el-input
-              v-bind="props"
-              v-model="form.orderNo"
-              @click.native="handleClick"
-            />
+            {{ props.label }}
           </template>
         </hy-form>
       </el-row>
@@ -66,7 +62,7 @@ export default {
   data() {
     return {
       form: {
-        name: 222
+        name: 222,
       },
       inputValue: "",
     };

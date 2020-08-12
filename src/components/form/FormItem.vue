@@ -1,14 +1,16 @@
 <template>
   <el-col v-bind="colProps">
-    <el-form-item v-bind="formItemProps" :class="formItemClass">
+        {{ key }}
+
+    <el-form-item v-bind="formItemProps">
       <template slot="label">
-        <slot :name="`${key}-label`" v-bind="{ label }">
-          {{ label }}
+        <slot :name="`label-${key}`" v-bind="{ label }">
+          {{ label }}{{ labelSuffix }}
         </slot>
       </template>
       <div :style="{ width: wrapperWidthProp }">
         <slot :name="key" v-bind="slotScope">
-          <field-element v-model="form[key]" v-bind="inputProps" />
+          <yl-field-element v-model="form[key]" v-bind="inputProps" />
         </slot>
       </div>
     </el-form-item>
@@ -22,13 +24,12 @@ import { ElemetPropsKeys } from "./constants";
 import "./FieldElement";
 
 export default {
-  name: "HyFormItem",
+  name: "YlFormItem",
   inject: [
-    "labelAlign",
     "fieldCol",
     "labelWidth",
     "wrapperWidth",
-    "colon",
+    "labelSuffix",
     "globalFieldType",
   ],
   props: {
@@ -60,7 +61,7 @@ export default {
     inputProps() {
       return {
         ...pick(this.field, ["type", ...ElemetPropsKeys]),
-        globalFieldType:  this.globalFieldType || {}
+        globalFieldType: this.globalFieldType || {},
       };
     },
     colProps() {
@@ -78,44 +79,19 @@ export default {
     labelWidthProp() {
       const { labelWidth } = this.field;
       const value = labelWidth || this.labelWidth;
-      if (typeof value === "number") return `${value}px`;
-      return value;
+      return this.autoPrefixCssUnit(value);
     },
     wrapperWidthProp() {
       const { wrapperWidth } = this.field;
       const value = wrapperWidth || this.wrapperWidth;
+      return this.autoPrefixCssUnit(value);
+    },
+  },
+  methods: {
+    autoPrefixCssUnit(value) {
       if (typeof value === "number") return `${value}px`;
       return value;
-    },
-    colonProp() {
-      const { colon } = this.field;
-      return colon || this.colon;
-    },
-    formItemClass() {
-      return {
-        "furion-form-item-colon": this.colonProp,
-        [`furion-form-item-label-${this.labelAlign}`]: true,
-      };
     },
   },
 };
 </script>
-
-<style lang="css">
-.furion-form-item-colon .el-form-item__label:after {
-  content: ":";
-  color: #333;
-}
-
-.furion-form-item-label-left .el-form-item__label {
-  text-align: left;
-}
-
-.furion-form-item-label-center .el-form-item__label {
-  text-align: center;
-}
-
-.furion-form-item-label-right .el-form-item__label {
-  text-align: right;
-}
-</style>

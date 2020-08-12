@@ -1,23 +1,23 @@
 <template>
   <el-form :model="form" v-bind="formProps">
-    <hy-form-item
+    <yl-form-item
       v-for="{ key, ...field } of dealedFields"
       :key="key"
       :field="field"
       :form="form"
     >
-      <template :slot="`${key}-label`" slot-scope="props">
-        <slot :name="`${key}-label`" v-bind="props" />
+      <template :slot="`label-${key}`" slot-scope="props">
+        <slot :name="`label-${key}`" v-bind="props" />
       </template>
       <template :slot="key" slot-scope="props">
         <slot :name="key" v-bind="props" />
       </template>
-    </hy-form-item>
+    </yl-form-item>
   </el-form>
 </template>
 
 <script>
-import HyFormItem from "./FormItem";
+import YlFormItem from "./FormItem";
 import FormFields from "./formFields";
 
 export default {
@@ -60,42 +60,34 @@ export default {
       type: [Number, String],
       default: 300,
     },
-    labelAlign: {
+    labelSuffix: {
       type: String,
-      default: "right",
-    },
-    colon: {
-      type: Boolean,
-      default: true,
+      default: ':',
     },
   },
   components: {
-    HyFormItem,
+    YlFormItem,
   },
   computed: {
     formProps() {
       return {
         size: this.size,
+        labelPosition: 'right',
         ...this.$attrs,
       };
     },
     dealedFields() {
-      console.log(this.formFields.combineNextFields(
-        this.nextFields
-      ));
-      
       return this.formFields.combineNextFields(
         this.nextFields
       );
     },
     provide() {
-      const { labelAlign, fieldCol, labelWidth, wrapperWidth, colon } = this;
+      const { fieldCol, labelWidth, wrapperWidth } = this;
       return {
         fieldCol,
-        labelAlign,
         labelWidth,
         wrapperWidth,
-        colon,
+        labelSuffix: this.labelSuffix
       };
     },
   },
