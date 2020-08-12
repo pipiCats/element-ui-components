@@ -1,61 +1,72 @@
 import warning from "../_utils/warning";
+import isPlainObject from "../_utils/isPlainObject";
 
 class AbstractFields {
-  fields = undefined;
-  dealedFields = [];
-  keyMap = {};
+  constructor(fields = []) {
+    this.fieldKeyMap = {};
+    this.fields = this.createFields(Object.freeze(fields));
+    this.originalFieldsLength = this.fields.legnth;
+    this.rebuildField = this.rebuildField.bind(this);
+  }
 
-  dealFields = (fields) => {
-    // check field
+  createFields(fields) {
+    // check fields
     this.checkFields(fields);
-    const dealedFields = fields.map((field, index) => {
-      const { key } = field;
-      this.keyMap[key] = index;
-      return this.createDealedField(field, index, "field");
-    });
-    this.fields = fields;
-    this.dealedFields = dealedFields;
-  };
 
-  combineWithNextFields = (fields, nextFields, isFieldEffect) => {
-    if (!this.fields || isFieldEffect) {
-      this.dealFields(fields);
-    }
+    return fields.map((field, index) => {
+      const { key } = field;
+      this.fieldKeyMap[key] = index;
+      return this.rebuildField(field, index);
+    });
+  }
+
+  combineNextFields(nextFields) {
+    if (!nextFields) return this.fields;
     // check nextFields
-    if (nextFields) {
-      this.checkFields(nextFields);
+    this.checkFields(nextFields);
+
+    if (nextFields.length === 0) return this.fields;
+
+    if (this.fields.length > this.originalFieldsLength) {
+      this.fields = this.fields.slice(0, this.originalFieldsLength);
     }
-    // some condition just return
-    if (!nextFields || !nextFields.length) {
-      return this.dealedFields;
-    }
-    const { keyMap, mergeField, createDealedField, dealedFields } = this;
-    // merge fields with nextFields
+
     nextFields.forEach((nextField) => {
       const { key } = nextField;
-      const position = keyMap[key];
+      const position = this.fieldKeyMap[key];
       if (typeof position !== "undefined") {
-        const mergedField = mergeField(this.fields[position], nextField);
-        this.dealedFields[position] = createDealedField(
-          mergedField,
-          position,
-          "nextField"
-        );
+        const mergedField = this.mergeField(this.fields[position], nextField);
+        this.fields[position] = this.rebuildField(mergedField, position);
       } else {
-        this.keyMap[key] = dealedFields.length;
-        this.dealedFields.push(
-          createDealedField(nextField, dealedFields.length, "nextField")
-        );
+        const length = this.fields.length;
+        this.fieldKeyMap[key] = length;
+        this.fields.push(this.rebuildField(nextField, length));
       }
     });
 
-    this.dealedFields = [...this.dealedFields];
-    return this.dealedFields;
-  };
+    return this.fields;
+  }
 
-  checkFields = (fields) => {
+  mergeField(field = {}, nextField) {
+    return Object.keys(nextField).reduce(
+      (next, key) => {
+        if (isPlainObject(field[key]) && isPlainObject(nextField[key])) {
+          next[key] = {
+            ...field[key],
+            ...nextField[key],
+          };
+        } else {
+          next[key] = nextField[key];
+        }
+        return next;
+      },
+      { ...field }
+    );
+  }
+
+  checkFields(fields) {
     warning(Array.isArray(fields), "fields must be array");
-  };
+  }
 }
 
 export default AbstractFields;

@@ -1,11 +1,10 @@
 import omit from "omit.js";
 import AbstractFields from "../_fields/AbstractFields";
-import isPlainObject from "../_utils/isPlainObject";
 import warning from "../_utils/warning";
 import getPlaceholder from "../_utils/getPlaceholder";
 
 class FormFields extends AbstractFields {
-  createDealedField = (field) => {
+  rebuildField(field) {
     let placeholder;
     let enchanceRules;
     const {
@@ -22,7 +21,7 @@ class FormFields extends AbstractFields {
     if (
       name &&
       typeof name === "string" &&
-      !hasOwnProperty.call(attrs, "placeholder")
+      typeof attrs.placeholder !== 'undefined'
     ) {
       placeholder = getPlaceholder(name, type);
     }
@@ -51,24 +50,7 @@ class FormFields extends AbstractFields {
       prop: key,
       rules: enchanceRules,
     };
-  };
-
-  mergeField = (field = {}, nextField) => {
-    return Object.keys(nextField).reduce(
-      (next, key) => {
-        if (isPlainObject(field[key]) && isPlainObject(nextField[key])) {
-          next[key] = {
-            ...field[key],
-            ...nextField[key],
-          };
-        } else {
-          next[key] = nextField[key];
-        }
-        return next;
-      },
-      { ...field }
-    );
-  };
+  }
 }
 
 export default FormFields;
