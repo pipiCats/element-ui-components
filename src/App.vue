@@ -55,6 +55,11 @@ export default {
     return {
       globalRenderType: {
         test: value => `${value}-test`
+      },
+      thales: {
+        'hy-form': {
+          labelWidth: 200
+        }
       }
     }
   },
@@ -74,6 +79,8 @@ export default {
     formProps() {
       return {
         fieldCol,
+                  labelWidth: 300,
+
         fields: searchFields,
         nextFields: [
           {
