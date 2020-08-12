@@ -17,15 +17,15 @@ export default {
   watch: {
     selecedRows: {
       immediate: true,
-      handler(selecedRows) {
-        this.$emit("selected-rows-change", selecedRows);
+      handler(rows) {
+        this.$emit("selected-rows-change", rows);
       },
     },
   },
   methods: {
     __clearSelection() {
       this.selecedRows = [];
-      this.__selectedRowsKeyMap = {};
+      this.__rowsKeyMap = {};
       this.$table.clearSelection();
       // 重置当前列表数据的选中状态
       this.$table.data.forEach((row) => {
@@ -42,7 +42,7 @@ export default {
         (data) => {
           if (data.length) {
             data.forEach((row) => {
-              if (this.__selectedRowsKeyMap[row[this.__rowKey]]) {
+              if (this.__rowsKeyMap[row[this.__rowKey]]) {
                 // 调用组件实例方法设置表格选中状态
                 this.$table.toggleRowSelection(row, true);
               }
@@ -61,11 +61,11 @@ export default {
           (selectedRow) => selectedRow[this.__rowKey] !== row[this.__rowKey]
         );
         // 删除对应的key
-        delete this.__selectedRowsKeyMap[row[this.__rowKey]];
+        delete this.__rowsKeyMap[row[this.__rowKey]];
       } else {
         row[SELECT_FLAG] = true;
         // 保存对应的key
-        this.__selectedRowsKeyMap[row[this.__rowKey]] = true;
+        this.__rowsKeyMap[row[this.__rowKey]] = true;
         this.selecedRows.push(row);
       }
     },
@@ -84,27 +84,27 @@ export default {
           const isIncludeKey = data__rowKeys[rowKey];
           if (isIncludeKey) {
             // 删除对应的key
-            delete this.__selectedRowsKeyMap[rowKey];
+            delete this.__rowsKeyMap[rowKey];
           }
 
           return !isIncludeKey;
         });
       } else {
-        const unSelectedRows = [];
+        const rows = [];
         selection.forEach((row) => {
           if (!row[SELECT_FLAG]) {
-            unSelectedRows.push(row);
+            rows.push(row);
             row[SELECT_FLAG] = true;
             // 存储key
-            this.__selectedRowsKeyMap[row[this.__rowKey]] = true;
+            this.__rowsKeyMap[row[this.__rowKey]] = true;
           }
         });
-        this.selecedRows = this.selecedRows.concat(unSelectedRows);
+        this.selecedRows = this.selecedRows.concat(rows);
       }
     },
   },
   created() {
     // row key map
-    this.__selectedRowsKeyMap = {};
+    this.__rowsKeyMap = {};
   },
 };
