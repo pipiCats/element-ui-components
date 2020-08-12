@@ -26,11 +26,11 @@
 import YlForm from "@thales/form";
 import YlTable from "@thales/table";
 import searchPageMixin from "@thales/search-page";
-import muiltSelectMixin from "./muiltSelectMixin";
+import crossPageMuiltSelectMixin from "./crossPageMuiltSelectMixin";
 import { searchFields, tableFields } from "./fields";
 
 export default {
-  mixins: [searchPageMixin, muiltSelectMixin],
+  mixins: [searchPageMixin, crossPageMuiltSelectMixin],
   provide() {
     return {
       thales: {

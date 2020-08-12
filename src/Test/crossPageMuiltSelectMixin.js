@@ -54,7 +54,7 @@ export default {
     },
     // 单选
     __onSelect(selection, row) {
-      if (row[SELECT_FLAG]) {
+      if (this.__rowsKeyMap[row[this.__rowKey]] || row[SELECT_FLAG]) {
         // 已被选中, 则取消选中
         row[SELECT_FLAG] = false;
         this.selecedRows = this.selecedRows.filter(
@@ -73,15 +73,15 @@ export default {
       const { data } = this.$table;
       // 取消全选操作
       if (selection.length === 0) {
-        const data__rowKeys = {};
+        const rowKeys = {};
         data.forEach((item) => {
           const rowKey = item[this.__rowKey];
           item[SELECT_FLAG] = false;
-          data__rowKeys[rowKey] = true;
+          rowKeys[rowKey] = true;
         });
         this.selecedRows = this.selecedRows.filter((selectedRow) => {
           const rowKey = selectedRow[this.__rowKey];
-          const isIncludeKey = data__rowKeys[rowKey];
+          const isIncludeKey = rowKeys[rowKey];
           if (isIncludeKey) {
             // 删除对应的key
             delete this.__rowsKeyMap[rowKey];
