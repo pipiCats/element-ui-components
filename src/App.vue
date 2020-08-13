@@ -2,7 +2,7 @@
   <div id="app">
     <el-row>
       <el-row>
-        <hy-form v-model="form" v-bind="formProps">
+        <hy-form ref="hyForm" v-model="form" v-bind="formProps">
           <template slot="label-orderNo" slot-scope="{ label }">
             <span>{{ label }}---</span>
           </template>
@@ -145,6 +145,9 @@ export default {
     HyForm,
     HyTable,
   },
+  mounted() {
+    console.log(this.$refs.hyForm.$form)
+  }
 };
 </script>
 

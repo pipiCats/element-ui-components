@@ -35,11 +35,21 @@ export default function withConfigConsumer(Component) {
       props: {},
     },
     {
+      listeners(listeners) {
+        return {
+          ...listeners,
+          "forward-ref": (key, ref) => {
+            this[key] = ref;
+          },
+        };
+      },
       attrs(attrs) {
         return getAttrsExcludeProps(attrs, props);
       },
       props($props) {
         const { _componentTag: tagName } = this.$options;
+        console.log('tagName', tagName)
+
         const injectProps = this.thales[tagName];
         const afferentProps = getAttrsIncludeProps(this.$attrs, props);
         return {

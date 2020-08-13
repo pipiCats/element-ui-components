@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" v-bind="formProps">
+  <el-form ref="form" :model="form" v-bind="formProps">
     <yl-form-item
       v-for="{ key, ...field } of dealedFields"
       :key="key"
@@ -69,6 +69,9 @@ export default {
     YlFormItem,
   },
   computed: {
+    $form() {
+      return this.$refs.form;
+    },
     formProps() {
       return {
         size: this.size,
@@ -107,5 +110,8 @@ export default {
     this.formFields = new FormFields(this.fields);
     this.form = this.value || {};
   },
+  mounted() {
+    this.$emit('forward-ref', '$form', this.$form);
+  }
 };
 </script>
